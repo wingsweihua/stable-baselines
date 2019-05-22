@@ -3,7 +3,7 @@ import functools
 from stable_baselines.common import BaseRLModel
 from stable_baselines.common import OffPolicyRLModel
 from stable_baselines.common.base_class import _UnvecWrapper
-from stable_baselines.common.vec_env import VecEnvWrapper
+from stable_baselines.common.vec_env import VecEnvWrapper, GoalEnvVecNormalize
 from .replay_buffer import HindsightExperienceReplayWrapper, KEY_TO_GOAL_STRATEGY
 from .utils import HERGoalEnvWrapper
 
@@ -23,7 +23,8 @@ class HER(BaseRLModel):
     def __init__(self, policy, env, model_class, n_sampled_goal=4,
                  goal_selection_strategy='future', *args, **kwargs):
 
-        assert not isinstance(env, VecEnvWrapper), "HER does not support VecEnvWrapper yet"
+        if isinstance(env, VecEnvWrapper):
+            assert isinstance(env, GoalEnvVecNormalize), "HER support only GoalEnvVecNormalize"
 
         super().__init__(policy=policy, env=env, verbose=kwargs.get('verbose', 0),
                          policy_base=None, requires_vec_env=False)
@@ -72,7 +73,8 @@ class HER(BaseRLModel):
                                                 wrapped_env=self.env)
 
     def set_env(self, env):
-        assert not isinstance(env, VecEnvWrapper), "HER does not support VecEnvWrapper yet"
+        if isinstance(env, VecEnvWrapper):
+            assert isinstance(env, GoalEnvVecNormalize), "HER support only GoalEnvVecNormalize"
         super().set_env(env)
         self._create_replay_wrapper(self.env)
         self.model.set_env(self.env)
