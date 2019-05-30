@@ -14,6 +14,7 @@ notebooks:
 -  `Atari Games`_
 -  `Breakout`_ (trained agent included)
 -  `Hindsight Experience Replay`_
+-  `RL Baselines zoo`_
 
 .. _Getting Started: https://colab.research.google.com/drive/1_1H5bjWKYBVKbbs-Kj83dsfuZieDNcFU
 .. _Training, Saving, Loading: https://colab.research.google.com/drive/16QritJF5kgT3mtnODepld1fo5tFnFCoc
@@ -22,6 +23,7 @@ notebooks:
 .. _Atari Games: https://colab.research.google.com/drive/1iYK11yDzOOqnrXi1Sfjm1iekZr4cxLaN
 .. _Breakout: https://colab.research.google.com/drive/14NwwEHwN4hdNgGzzySjxQhEVDff-zr7O
 .. _Hindsight Experience Replay: https://colab.research.google.com/drive/1VDD0uLi8wjUXIqAdLKiK15XaEe0z2FOc
+.. _RL Baselines zoo: https://colab.research.google.com/drive/1cPGK3XrCqEs3QLqiijsfib9OFht3kObX
 
 .. |colab| image:: ../_static/img/colab.svg
 

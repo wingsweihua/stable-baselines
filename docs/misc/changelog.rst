@@ -22,7 +22,8 @@ Pre-Release 2.6.0a0 (WIP)
 - The parameter ``filter_size`` of the function ``conv`` in A2C utils now supports passing a list/tuple of two integers (height and width), in order to have non-squared kernel matrix. (@yutingsz)
 - add ``random_exploration`` parameter for DDPG and SAC, it may be useful when using HER + DDPG/SAC
   this hack was present in the original OpenAI Baselines DDPG + HER implementation.
-
+- fixed a bug where initial learning rate is logged instead of its placeholder in ``A2C.setup_model`` (@sc420)
+- fixed a bug where number of timesteps is incorrectly updated and logged in ``A2C.learn`` and ``A2C._train_step`` (@sc420)
 
 **Breaking Change:** DDPG replay buffer was unified with DQN/SAC replay buffer. As a result,
 when loading a DDPG model trained with stable_baselines<2.6.0, it throws an import error.
@@ -334,4 +335,4 @@ In random order...
 
 Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk @JohannesAck
 @EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn @AdamGleave @keshaviyengar @tperol
-@XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz
+@XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz @sc420 @Aaahh @billtubbs
