@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import numpy as np
 from gym import GoalEnv, spaces
 
@@ -18,9 +20,9 @@ class BitFlippingEnv(GoalEnv):
         # The achieved goal is determined by the current state
         # here, it is a special where they are equal
         self.observation_space = spaces.Dict({
-            'observation': spaces.MultiBinary(n_bits),
             'achieved_goal': spaces.MultiBinary(n_bits),
-            'desired_goal': spaces.MultiBinary(n_bits)
+            'desired_goal': spaces.MultiBinary(n_bits),
+            'observation': spaces.MultiBinary(n_bits)
         })
         if continuous:
             self.action_space = spaces.Box(-1, 1, shape=(n_bits,), dtype=np.float32)
@@ -38,22 +40,22 @@ class BitFlippingEnv(GoalEnv):
     def reset(self):
         self.current_step = 0
         self.state = self.observation_space.spaces['observation'].sample()
-        return {
-            'observation': self.state.copy(),
-            'achieved_goal': self.state.copy(),
-            'desired_goal': self.desired_goal.copy()
-        }
+        return OrderedDict([
+            ('achieved_goal', self.state.copy()),
+            ('desired_goal', self.desired_goal.copy()),
+            ('observation', self.state.copy())
+        ])
 
     def step(self, action):
         if self.continuous:
             self.state[action > 0] = 1 - self.state[action > 0]
         else:
             self.state[action] = 1 - self.state[action]
-        obs = {
-            'observation': self.state.copy(),
-            'achieved_goal': self.state.copy(),
-            'desired_goal': self.desired_goal.copy()
-        }
+        obs = OrderedDict([
+            ('achieved_goal', self.state.copy()),
+            ('desired_goal', self.desired_goal.copy()),
+            ('observation', self.state.copy())
+        ])
         reward = self.compute_reward(obs['achieved_goal'], obs['desired_goal'], None)
         done = (obs['achieved_goal'] == obs['desired_goal']).all()
         self.current_step += 1
