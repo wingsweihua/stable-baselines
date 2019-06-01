@@ -3,6 +3,10 @@ from collections import OrderedDict
 import numpy as np
 from gym import spaces
 
+# Important: gym mixes up ordered and unordered keys
+# and the Dict space may return a different order of keys that the actual one
+KEY_ORDER = ['observation', 'achieved_goal', 'desired_goal']
+
 
 class HERGoalEnvWrapper(object):
     """
@@ -22,13 +26,6 @@ class HERGoalEnvWrapper(object):
         # TODO: check that all spaces are of the same type
         # (current limitation of the wrapper)
         # TODO: check when dim > 1
-
-        # Sanity check because we are doing dict to array operations
-        subspaces_keys = list(env.observation_space.spaces.keys())
-        desired_keys = ['achieved_goal', 'desired_goal', 'observation']
-        assert subspaces_keys == desired_keys,\
-            "The keys of the GoalEnv must be ordered"\
-            "in the following order:{} != {}".format(desired_keys, subspaces_keys)
 
         goal_space_shape = env.observation_space.spaces['achieved_goal'].shape
         self.obs_dim = env.observation_space.spaces['observation'].shape[0]
@@ -62,7 +59,7 @@ class HERGoalEnvWrapper(object):
         """
         # Note: achieved goal is not removed from the observation
         # this is helpful to have a revertible transformation
-        return np.concatenate([obs for obs in obs_dict.values()])
+        return np.concatenate([obs_dict[key] for key in KEY_ORDER])
 
     def convert_obs_to_dict(self, observations):
         """
@@ -72,9 +69,9 @@ class HERGoalEnvWrapper(object):
         :return: (OrderedDict<np.ndarray>)
         """
         return OrderedDict([
-            ('achieved_goal', observations[:self.goal_dim]),
-            ('desired_goal', observations[self.goal_dim:2 * self.goal_dim]),
-            ('observation', observations[-self.obs_dim:]),
+            ('observation', observations[:self.obs_dim]),
+            ('achieved_goal', observations[self.obs_dim:self.obs_dim + self.goal_dim]),
+            ('desired_goal', observations[self.obs_dim + self.goal_dim:]),
         ])
 
     def step(self, action):
