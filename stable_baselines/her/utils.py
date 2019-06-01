@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import numpy as np
 from gym import spaces
 
@@ -20,6 +22,13 @@ class HERGoalEnvWrapper(object):
         # TODO: check that all spaces are of the same type
         # (current limitation of the wrapper)
         # TODO: check when dim > 1
+
+        # Sanity check because we are doing dict to array operations
+        subspaces_keys = list(env.observation_space.spaces.keys())
+        desired_keys = ['achieved_goal', 'desired_goal', 'observation']
+        assert subspaces_keys == desired_keys,\
+            "The keys of the GoalEnv must be ordered"\
+            "in the following order:{} != {}".format(desired_keys, subspaces_keys)
 
         goal_space_shape = env.observation_space.spaces['achieved_goal'].shape
         self.obs_dim = env.observation_space.spaces['observation'].shape[0]
@@ -60,13 +69,13 @@ class HERGoalEnvWrapper(object):
         Inverse operation of convert_dict_to_obs
 
         :param observations: (np.ndarray)
-        :return: (dict<np.ndarray>)
+        :return: (OrderedDict<np.ndarray>)
         """
-        return {
-            'observation': observations[:self.obs_dim],
-            'achieved_goal': observations[self.obs_dim:self.obs_dim + self.goal_dim],
-            'desired_goal': observations[self.obs_dim + self.goal_dim:],
-        }
+        return OrderedDict([
+            ('achieved_goal', observations[:self.goal_dim]),
+            ('desired_goal', observations[self.goal_dim:2 * self.goal_dim]),
+            ('observation', observations[-self.obs_dim:]),
+        ])
 
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
