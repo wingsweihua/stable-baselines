@@ -12,7 +12,9 @@ HER is a method wrapper that works with Off policy methods (DQN, SAC and DDPG fo
 
 .. note::
 
-	HER was re-implemented from scratch in Stable-Baselines compared to the original OpenAI baselines
+	HER was re-implemented from scratch in Stable-Baselines compared to the original OpenAI baselines.
+	If you want to reproduce results from the paper, please use the rl baselines zoo
+	in order to have the correct hyperparameters and at least 8 MPI workers with DDPG.
 
 .. warning::
 
