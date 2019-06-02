@@ -80,6 +80,9 @@ class HER(BaseRLModel):
     def get_env(self):
         return self.env
 
+    def get_parameter_list(self):
+        return self.model.get_parameter_list()
+
     def __getattr__(self, attr):
         """
         Wrap the RL model.
