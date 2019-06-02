@@ -18,7 +18,7 @@ Name         Refactored [#f1]_        Recurrent ``Box``     ``Discrete`` Multi P
 A2C          ✔️                        ✔️         ✔️           ✔️            ✔️
 ACER         ✔️                        ✔️         ❌ [#f4]_   ✔️            ✔️
 ACKTR        ✔️                        ✔️         ❌ [#f4]_   ✔️            ✔️
-DDPG         ✔️                        ❌        ✔️           ❌           ❌
+DDPG         ✔️                        ❌        ✔️           ❌           ✔️ [#f3]_
 DQN          ✔️                        ❌        ❌          ✔️            ❌
 HER          ✔️                        ❌        ✔️           ✔️            ❌
 GAIL [#f2]_  ✔️                        ✔️         ✔️           ✔️            ✔️ [#f3]_
