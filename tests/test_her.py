@@ -33,8 +33,10 @@ def model_predict(model, env, n_steps, additional_check=None):
 
 @pytest.mark.parametrize('goal_selection_strategy', list(GoalSelectionStrategy))
 @pytest.mark.parametrize('model_class', [DQN, SAC, DDPG])
-def test_her(model_class, goal_selection_strategy):
-    env = BitFlippingEnv(N_BITS, continuous=model_class in [DDPG, SAC], max_steps=N_BITS)
+@pytest.mark.parametrize('discrete_obs_space', [False, True])
+def test_her(model_class, goal_selection_strategy, discrete_obs_space):
+    env = BitFlippingEnv(N_BITS, continuous=model_class in [DDPG, SAC],
+                         max_steps=N_BITS, discrete_obs_space=discrete_obs_space)
 
     # Take random actions 10% of the time
     kwargs = {'random_exploration': 0.1} if model_class in [DDPG, SAC] else {}
