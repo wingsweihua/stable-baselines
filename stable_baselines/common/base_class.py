@@ -703,7 +703,7 @@ class OffPolicyRLModel(BaseRLModel):
 
     @abstractmethod
     def learn(self, total_timesteps, callback=None, seed=None,
-              log_interval=100, tb_log_name="run", reset_num_timesteps=True):
+              log_interval=100, tb_log_name="run", reset_num_timesteps=True, replay_wrapper=None):
         pass
 
     @abstractmethod
