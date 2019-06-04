@@ -54,7 +54,7 @@ Release 2.5.1 (2019-05-04)
 
 **Bug fixes + improvements in the VecEnv**
 
-**Warning: breaking change when using custom recurrent policies**
+**Warning: breaking changes when using custom policies**
 
 - doc update (fix example of result plotter + improve doc)
 - fixed logger issues when stdout lacks ``read`` function
@@ -73,7 +73,8 @@ Release 2.5.1 (2019-05-04)
   to exactly one of the nested instances i.e. it must be unambiguous. (@kantneel)
 - fixed bug where result plotter would crash on very short runs (@Pastafarianist)
 - added option to not trim output of result plotter by number of timesteps (@Pastafarianist)
-- clarified the public interface of ``BasePolicy`` and ``ActorCriticPolicy``. **Breaking change** when using custom policies: ``masks_ph`` is now called ``dones_ph``.
+- clarified the public interface of ``BasePolicy`` and ``ActorCriticPolicy``. **Breaking change** when using custom policies: ``masks_ph`` is now called ``dones_ph``,
+  and most placeholders were made private: e.g. ``self.value_fn`` is now ``self._value_fn``
 - support for custom stateful policies.
 - fixed episode length recording in ``trpo_mpi.utils.traj_segment_generator`` (@GerardMaggiolino)
 
