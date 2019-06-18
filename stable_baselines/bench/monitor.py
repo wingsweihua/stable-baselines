@@ -14,7 +14,7 @@ class Monitor(Wrapper):
     EXT = "monitor.csv"
     file_handler = None
 
-    def __init__(self, env, filename, allow_early_resets=False, reset_keywords=(), info_keywords=()):
+    def __init__(self, env, filename, allow_early_resets=False, reset_keywords=(), info_keywords=(), max_episode_steps=None):
         """
         A monitor wrapper for Gym environments, it is used to know the episode reward, length, time and other data.
 
@@ -50,8 +50,15 @@ class Monitor(Wrapper):
         self.episode_rewards = []
         self.episode_lengths = []
         self.episode_times = []
+
         self.total_steps = 0
         self.current_reset_info = {}  # extra info about the current episode, that was passed in during reset()
+
+        if max_episode_steps is None:
+            max_episode_steps = env.spec.max_episode_steps
+        self.env.spec.max_episode_steps = max_episode_steps
+        self._max_episode_steps = max_episode_steps
+        self._elapsed_steps = None
 
     def reset(self, **kwargs):
         """
@@ -60,6 +67,9 @@ class Monitor(Wrapper):
         :param kwargs: Extra keywords saved for the next episode. only if defined by reset_keywords
         :return: ([int] or [float]) the first observation of the environment
         """
+
+        self._elapsed_steps = 0
+
         if not self.allow_early_resets and not self.needs_reset:
             raise RuntimeError("Tried to reset an environment before done. If you want to allow early resets, "
                                "wrap your env with Monitor(env, path, allow_early_resets=True)")
@@ -79,26 +89,54 @@ class Monitor(Wrapper):
         :param action: ([int] or [float]) the action
         :return: ([int] or [float], [float], [bool], dict) observation, reward, done, information
         """
-        if self.needs_reset:
-            raise RuntimeError("Tried to step environment that needs reset")
+
+        # if self.needs_reset:
+        #     raise RuntimeError("Tried to step environment that needs reset")
+
+        assert self._elapsed_steps is not None, "Cannot call env.step() before calling reset()"
         observation, reward, done, info = self.env.step(action)
+
         self.rewards.append(reward)
-        if done:
+        # if done:
+        #     self.needs_reset = True
+        #     ep_rew = sum(self.rewards)
+        #     eplen = len(self.rewards)
+        #     ep_info = {"r": round(ep_rew, 6), "l": eplen, "t": round(time.time() - self.t_start, 6)}
+        #     for key in self.info_keywords:
+        #         ep_info[key] = info[key]
+        #     self.episode_rewards.append(ep_rew)
+        #     self.episode_lengths.append(eplen)
+        #     self.episode_times.append(time.time() - self.t_start)
+        #     ep_info.update(self.current_reset_info)
+        #     if self.logger:
+        #         self.logger.writerow(ep_info)
+        #         self.file_handler.flush()
+        #     info['episode'] = ep_info
+        self.total_steps += 1
+
+        self._elapsed_steps += 1
+        if self._elapsed_steps >= self._max_episode_steps:
+            info['TimeLimit.truncated'] = not done
+            done = True
             self.needs_reset = True
+
+        if self.total_steps % 1000 == 0:
             ep_rew = sum(self.rewards)
             eplen = len(self.rewards)
-            ep_info = {"r": round(ep_rew, 6), "l": eplen, "t": round(time.time() - self.t_start, 6)}
+            ep_info = {"r": round(ep_rew, 6), "l": eplen, "t": round(time.time() - self.t_start, 6),
+                       "score_board": str(info['score_board'])}
             for key in self.info_keywords:
                 ep_info[key] = info[key]
             self.episode_rewards.append(ep_rew)
             self.episode_lengths.append(eplen)
             self.episode_times.append(time.time() - self.t_start)
+
             ep_info.update(self.current_reset_info)
             if self.logger:
                 self.logger.writerow(ep_info)
                 self.file_handler.flush()
             info['episode'] = ep_info
-        self.total_steps += 1
+
         return observation, reward, done, info
 
     def close(self):
