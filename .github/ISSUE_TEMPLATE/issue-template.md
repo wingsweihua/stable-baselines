@@ -4,9 +4,11 @@ about: How to create an issue for this repository
 
 ---
 
+**Important Note: We do not do technical support, nor consulting** and don't answer personal questions per email.
+
 If you have any questions, feel free to create an issue with the tag [question].  
 If you wish to suggest an enhancement or feature request, add the tag [feature request].  
-If you are submitting a bug report, please fill in the following details.  
+If you are submitting a bug report, please fill in the following details.
 
 **Describe the bug**
 A clear and concise description of what the bug is.
